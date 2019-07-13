@@ -3,37 +3,37 @@ version: '0.1.0.0'
 category: Web
 author: Faris Nasution
 maintainer: electricladyland156@gmail.com
-copyright: 2018 Faris Nasution
+copyright: 2019 Faris Nasution
 license: BSD3
 github: nasutiooon/snaplet-jose-jwt-simple
 extra-source-files:
-- README.md
+  - README.md
 
 default-extensions:
-- OverloadedStrings
-- GeneralizedNewtypeDeriving
-- ConstraintKinds
-- FlexibleContexts
-- FlexibleInstances
-- RecordWildCards
+  - OverloadedStrings
+  - GeneralizedNewtypeDeriving
+  - ConstraintKinds
+  - FlexibleContexts
+  - FlexibleInstances
+  - RecordWildCards
 
 dependencies:
-- base
+  - base
 
 library:
   source-dirs: src
   dependencies:
-  - bytestring
-  - snap
-  - configurator
-  - mtl
-  - aeson
-  - jose-jwt
-  - cryptonite
-  - time
+    - bytestring
+    - snap
+    - configurator
+    - mtl
+    - aeson
+    - jose-jwt
+    - cryptonite
+    - time
   ghc-options:
-  - -Wall
-  - -Werror
-  - -Wincomplete-record-updates
-  - -Wincomplete-uni-patterns
-  - -Wredundant-constraints
+    - -Wall
+    - -Werror
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wredundant-constraints

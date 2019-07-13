@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: de0c7a407c5526deaac540805bfdde4baf9c3d5bd921223b8aa2a43a77d70dce
+-- hash: 03eba535ff4a0edf67504c5f9eeeaaf4425c784d736734175da8a25783711c65
 
 name:           snaplet-jose-jwt-simple
 version:        0.1.0.0
@@ -13,7 +13,7 @@ homepage:       https://github.com/nasutiooon/snaplet-jose-jwt-simple#readme
 bug-reports:    https://github.com/nasutiooon/snaplet-jose-jwt-simple/issues
 author:         Faris Nasution
 maintainer:     electricladyland156@gmail.com
-copyright:      2018 Faris Nasution
+copyright:      2019 Faris Nasution
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
