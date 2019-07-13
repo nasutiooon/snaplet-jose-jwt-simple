@@ -9,15 +9,16 @@ module Snap.Snaplet.Jose.Jwt
   ) where
 
 import           Control.Monad.Trans           (MonadIO, liftIO)
-import Data.Time.Clock.POSIX (getPOSIXTime)
 import           Crypto.Random                 (MonadRandom)
 import qualified Data.Aeson                    as A
 import qualified Data.ByteString               as B
 import qualified Data.Configurator             as C
 import qualified Data.Configurator.Types       as C
+import           Data.Time.Clock.POSIX         (getPOSIXTime)
 import           Jose.Jwk                      (Jwk)
-import           Jose.Jwt                      (Jwt, JwtContent, JwtEncoding,
-                                                JwtError, Payload, JwtClaims(..), IntDate(..))
+import           Jose.Jwt                      (IntDate (..), Jwt,
+                                                JwtClaims (..), JwtContent,
+                                                JwtEncoding, JwtError, Payload)
 import qualified Jose.Jwt                      as JT
 import           Paths_snaplet_jose_jwt_simple (getDataDir)
 import           Snap.Snaplet                  (SnapletInit,
@@ -30,7 +31,7 @@ class (MonadRandom m, MonadIO m) => HasJwtEncoder m where
 data JwtEncoder = JwtEncoder { duration :: Maybe Integer
                              , keys     :: [Jwk] }
 
-newtype Keystore = Keystore [Jwk]  deriving (Show)
+newtype Keystore = Keystore [Jwk] deriving (Show)
 
 instance A.FromJSON Keystore where
   parseJSON = A.withObject "" $ \o ->
@@ -45,7 +46,7 @@ jwtEncoderInit =
   return $ JwtEncoder duration keys'
   where
     desc = "jwt encoder snaplet"
-    dataDir = Just $ (<>"/resources/jwt") <$> getDataDir
+    dataDir = Just $ (<> "/resources") <$> getDataDir
 
 withJwtEncoder :: HasJwtEncoder m => (JwtEncoder -> m a) -> m a
 withJwtEncoder = (=<< getJwtEncoder)
@@ -55,26 +56,27 @@ encode
   => JwtEncoding
   -> Payload
   -> m (Either JwtError Jwt)
-encode encoding payload =
-  withJwtEncoder $ \encoder -> JT.encode (keys encoder) encoding payload
+encode encoding payload = do
+  keys' <- keys <$> getJwtEncoder
+  JT.encode keys' encoding payload
 
 decode
   :: HasJwtEncoder m
   => Maybe JwtEncoding
   -> B.ByteString
   -> m (Either JwtError JwtContent)
-decode encoding token =
-  withJwtEncoder $ \encoder -> JT.decode (keys encoder) encoding token
+decode encoding token = do
+  keys' <- keys <$> getJwtEncoder
+  JT.decode keys' encoding token
 
 assocTime :: HasJwtEncoder m => JwtClaims -> m JwtClaims
-assocTime claims =  withJwtEncoder f
-  where
-    f encoder = do
-      now <- liftIO getPOSIXTime
-      let iat = Just $ IntDate now
-          expAt = IntDate . (now +) . fromInteger <$> duration encoder
-      return $ claims { jwtIat = iat
-                      , jwtExp = expAt }
+assocTime claims = do
+  encoder <- getJwtEncoder
+  now <- liftIO getPOSIXTime
+  let iat = Just $ IntDate now
+      expAt = IntDate . (now +) . fromInteger <$> duration encoder
+  return $ claims { jwtIat = iat
+                  , jwtExp = expAt }
 
 getKeys :: C.Config -> IO [Jwk]
 getKeys config = do
